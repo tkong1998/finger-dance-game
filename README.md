@@ -1,5 +1,5 @@
 # finger-dance-game
- A simple Java desktop game, using JavaFx.  
+A simple Java desktop game, using JavaFx. This is the final quiz of ISOM3320 Spring2020.  
 
 ## Play the game
 Compile the game by using `javac Main.java` in the Terminal, then run it by `java Main`.
