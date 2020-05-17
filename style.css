@@ -1,0 +1,25 @@
+.root{
+    -fx-padding: 10 20 10 20;
+}
+.label {
+    -fx-font-size: 13;
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-fill: black;
+}
+.rectangle {
+    -fx-stroke: black;
+    -fx-stroke-width: 2;
+    -fx-fill: null;
+    -fx-height: 70;
+    -fx-width: 70;
+}
+#warning {
+    -fx-font-size: 13;
+    -fx-font-family: "Arial";
+    -fx-fill: red;
+}
+
+#top3 {
+    -fx-font-style: italic; 
+}
