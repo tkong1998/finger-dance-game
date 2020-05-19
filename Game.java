@@ -136,19 +136,19 @@ public class Game implements Comparable<Game> {
 
     /**
      * Generate a time interval to corresponding the difficulty level randomly Using
-     * the Math.random()*((max-min)+1)+min to generate the random number within the
-     * range
+     * the Math.random()*((max-min))+min+1 to generate the random number within the
+     * range (this includes one second to let the play hit the music note)
      * 
      * @return a Duration
      */
     public Duration generateTime() {
         Duration duration = Duration.ZERO;
         if (this.level.equals("Easy")) {
-            duration = Duration.millis((Math.random() * (3 - 1 + 1) + 1) * 1000);
+            duration = Duration.millis((Math.random() * (3 - 1) + 2) * 1000);
         } else if (this.level.equals("Medium")) {
-            duration = Duration.millis((Math.random() * (2 - 0.5 + 1) + 0.5) * 1000);
+            duration = Duration.millis((Math.random() * (2 - 0.5) + 1.5) * 1000);
         } else if (this.level.equals("Hard")) {
-            duration = Duration.millis((Math.random() * (1 - 0.3 + 1) + 0.3) * 1000);
+            duration = Duration.millis((Math.random() * (1 - 0.3) + 1.3) * 1000);
         }
         return duration;
     }

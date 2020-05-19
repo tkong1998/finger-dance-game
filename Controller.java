@@ -2,6 +2,7 @@ import java.util.*;
 
 import javafx.animation.*;
 import javafx.event.*;
+import javafx.geometry.*;
 import javafx.util.*;
 import javafx.scene.*;
 import javafx.scene.control.*;
@@ -67,6 +68,7 @@ public class Controller {
      * @param level
      */
     public void playGame(String level) {
+        System.out.println("PLAY " + level + " GAME");
         stage.setScene(new View(stage).gameScene(this.game));
     }
 
@@ -81,6 +83,8 @@ public class Controller {
         GridPane gameGrid = new GridPane();
         gameGrid.setHgap(5);
         gameGrid.setVgap(5);
+        gameGrid.setPadding(new Insets(10, 10, 10, 10));
+        gameGrid.setAlignment(Pos.CENTER);
 
         // load the images from the arraylist
         ArrayList<Pair<Integer, Image>> imageList = game.getImageList().getList();
@@ -110,7 +114,48 @@ public class Controller {
         gameGrid.add(g1, 0, 1);
         gameGrid.add(g2, 1, 1);
         gameGrid.add(g3, 2, 1);
+
         return gameGrid;
+    }
+    
+    public void eraseMusicNote(ActionEvent nextEvent, GridPane gameGrid) {
+        // play this note if the player misses
+        new Note("X").playNote();
+        ArrayList<Pair<Integer, Image>> imageList = game.getImageList().getErasedList();
+        ImageView image0 = new ImageView(imageList.get(0).getValue());
+        Rectangle rec0 = new Rectangle(0, 0, 70, 70);
+        rec0.getStyleClass().add("rectangle");
+        Group g0 = new Group();
+        g0.getChildren().addAll(image0, rec0);
+        ImageView image1 = new ImageView(imageList.get(1).getValue());
+        Rectangle rec1 = new Rectangle(0, 0, 70, 70);
+        rec1.getStyleClass().add("rectangle");
+        Group g1 = new Group();
+        g1.getChildren().addAll(image1, rec1);
+        ImageView image2 = new ImageView(imageList.get(2).getValue());
+        Rectangle rec2 = new Rectangle(0, 0, 70, 70);
+        rec2.getStyleClass().add("rectangle");
+        Group g2 = new Group();
+        g2.getChildren().addAll(image2, rec2);
+        ImageView image3 = new ImageView(imageList.get(3).getValue());
+        Rectangle rec3 = new Rectangle(0, 0, 70, 70);
+        rec3.getStyleClass().add("rectangle");
+        Group g3 = new Group();
+        g3.getChildren().addAll(image3, rec3);
+
+        // add the imageview group into the grid
+        GridPane grid = new GridPane();
+        grid.setHgap(5);
+        grid.setVgap(5);
+        grid.setPadding(new Insets(10, 10, 10, 10));
+        grid.setAlignment(Pos.CENTER);
+        grid.add(g0, 1, 0);
+        grid.add(g1, 0, 1);
+        grid.add(g2, 1, 1);
+        grid.add(g3, 2, 1);
+
+        gameGrid.getChildren().clear();
+        gameGrid.getChildren().setAll(grid);
     }
 
     /**
@@ -127,13 +172,15 @@ public class Controller {
      * @param timeline the timeline
      */
     public void updateGame(ActionEvent e, Label score, Label round, GridPane gameGrid, Timeline timeline) {
+        System.out.println("Miss the note");
         timeline.stop();
-        // play this note if the player misses
-        new Note("X").playNote();
+        timeline.getKeyFrames().clear();
         if (this.game.nextRound()) {
-            KeyFrame keyFrame = new KeyFrame(this.game.generateTime(),
+            KeyFrame keyFrame1 = new KeyFrame(Duration.millis(1000), nextEvent -> eraseMusicNote(nextEvent, gameGrid));
+            timeline.getKeyFrames().add(keyFrame1);
+            KeyFrame keyFrame2 = new KeyFrame(this.game.generateTime(),
                     nextEvent -> updateGame(nextEvent, score, round, gameGrid, timeline));
-            timeline.getKeyFrames().add(keyFrame);
+            timeline.getKeyFrames().add(keyFrame2);
             timeline.play();
             score.setText(String.valueOf(this.game.getPlayer().getScore()));
             round.setText(String.valueOf(1 + this.game.getCurrentRound()));
@@ -160,17 +207,22 @@ public class Controller {
      */
     public void updateGame(KeyEvent e, Label score, Label round, GridPane gameGrid, Timeline timeline) {
         timeline.stop();
+        timeline.getKeyFrames().clear();
         if (this.game.isHit(e.getCode())) {
             this.game.playNote();
             this.game.getPlayer().incrementScore();
+            System.out.println("HIT!!! Score+1");
         } else {
             // if the player miss the hit or wrong, play this note
             new Note("X").playNote();
+            System.out.println("Hit the wrond note");
         }
         if (this.game.nextRound()) {
-            KeyFrame keyFrame = new KeyFrame(this.game.generateTime(),
+            KeyFrame keyFrame1 = new KeyFrame(Duration.millis(1000), nextEvent -> eraseMusicNote(nextEvent, gameGrid));
+            timeline.getKeyFrames().add(keyFrame1);
+            KeyFrame keyFrame2 = new KeyFrame(this.game.generateTime(),
                     nextEvent -> updateGame(nextEvent, score, round, gameGrid, timeline));
-            timeline.getKeyFrames().add(keyFrame);
+            timeline.getKeyFrames().add(keyFrame2);
             timeline.play();
             score.setText(String.valueOf(this.game.getPlayer().getScore()));
             round.setText(String.valueOf(1 + this.game.getCurrentRound()));
@@ -190,6 +242,7 @@ public class Controller {
         gameRecord.addGame(this.game);
         gameRecord.writeTop3();
         stage.setScene(new View(stage).scoreScene(this.gameRecord, this.game));
+        System.out.println("GAME OVER");
     }
 
     /**

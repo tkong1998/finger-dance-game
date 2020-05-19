@@ -7,6 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.*;
+import javafx.util.Duration;
 
 /**
  * The view class will generate the GUI components of different scenes
@@ -126,10 +127,11 @@ public class View {
 
         // create the timeline at whose end the game will go to the next round if the
         // player misses
-        Timeline timeline = new Timeline();
-        KeyFrame keyFrame = new KeyFrame(game.generateTime(),
-                e -> controller.updateGame(e, score, round, gameGrid, timeline));
-        timeline.getKeyFrames().add(keyFrame);
+        Timeline timeline = new Timeline(); 
+        KeyFrame keyFrame1 = new KeyFrame(Duration.millis(1000), nextEvent -> controller.eraseMusicNote(nextEvent,gameGrid));
+        KeyFrame keyFrame2 = new KeyFrame(game.generateTime(),
+                nextEvent -> controller.updateGame(nextEvent, score, round, gameGrid, timeline));
+        timeline.getKeyFrames().addAll(keyFrame1, keyFrame2);
         timeline.play();
 
         // create a vertical box to store all the components groups
